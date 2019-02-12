@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zcx.zhihuCrawler.DAO.CrawlerDAO">
+
+    <update id="createTable">
+        CREATE TABLE IF NOT EXISTS `question` (
+          `id` varchar(50) NOT NULL,
+          `title` varchar(500) DEFAULT NULL,
+          `answer_count` varchar(50) DEFAULT NULL,
+          `comment_count` varchar(50) DEFAULT NULL,
+          `follower_count` varchar(50) DEFAULT NULL,
+          `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+    </update>
+
+    <insert id="saveQuestion" parameterType="com.zcx.zhihuCrawler.VO.Question">
+        INSERT INTO `question`
+        (
+        `id`,
+        `title`,
+        `answer_count`,
+        `comment_count`,
+        `follower_count`
+        )
+        VALUES
+        <foreach collection="list" separator="," item="item">
+            (
+            <trim suffixOverrides=",">
+                #{item.id,jdbcType=VARCHAR},
+                #{item.title,jdbcType=VARCHAR},
+                #{item.answerCount,jdbcType=VARCHAR},
+                #{item.commentCount,jdbcType=VARCHAR},
+                #{item.followerCount,jdbcType=VARCHAR}
+            </trim>
+            )
+        </foreach>
+    </insert>
+
+    <select id="getSavedQuestionsList" resultType="java.lang.String">
+        select id from question
+    </select>
+    <select id="getLastQuestionIds" resultType="java.lang.String">
+        select id from question order by create_time desc limit 100
+    </select>
+
+</mapper>
