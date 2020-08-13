@@ -21,9 +21,7 @@ public class CrawlerDAOImp implements CrawlerDAO {
         try {
             FileOutputStream out = new FileOutputStream(filePath, true);
             PrintStream p = new PrintStream(out);
-            questions.forEach(one -> {
-                p.println(one.toString());
-            });
+            questions.forEach(one -> p.println(one.toString()));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -45,13 +43,11 @@ public class CrawlerDAOImp implements CrawlerDAO {
     public List<String> getSavedQuestionsList() {
         List<String> savedQuestionsList = new ArrayList<>();
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath)));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("questions")));
             while (reader.ready()) {
                 String line = reader.readLine();
                 savedQuestionsList.add(line.split(" ")[0]);
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -62,7 +58,6 @@ public class CrawlerDAOImp implements CrawlerDAO {
     public List<String> getLastQuestionIds() {
         List<String> savedQuestionIdsList = this.getSavedQuestionsList();
         int endIndex = savedQuestionIdsList.size() - 1;
-        List<String> getLastQuestionIds = savedQuestionIdsList.subList(endIndex > 100 ? endIndex - 100 : 0, endIndex);
-        return getLastQuestionIds;
+        return savedQuestionIdsList.subList(endIndex > 100 ? endIndex - 100 : 0, endIndex);
     }
 }

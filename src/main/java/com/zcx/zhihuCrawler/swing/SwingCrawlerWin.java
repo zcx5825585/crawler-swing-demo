@@ -1,16 +1,16 @@
 package com.zcx.zhihuCrawler.swing;
 
 import com.zcx.zhihuCrawler.service.CrawlerService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
 @Component
 public class SwingCrawlerWin {
-    @Autowired
+    @Resource
     private CrawlerService crawlerService;
 
     public void create() {

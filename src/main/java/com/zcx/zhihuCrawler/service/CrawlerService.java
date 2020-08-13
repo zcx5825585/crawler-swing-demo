@@ -3,9 +3,9 @@ package com.zcx.zhihuCrawler.service;
 import com.zcx.zhihuCrawler.DAO.CrawlerDAO;
 import com.zcx.zhihuCrawler.VO.Question;
 import com.zcx.zhihuCrawler.crawler.QuestionCrawler;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import javax.swing.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ import java.util.List;
  */
 @Service
 public class CrawlerService {
-    @Autowired
+    @Resource
     private CrawlerDAO crawlerDAO;
 
     private QuestionCrawler crawler;
@@ -32,18 +32,16 @@ public class CrawlerService {
             this.setCaretPosition(this.getText().length());
         }
     };
-    private Thread crawlerThread;
-    private Thread saveThread;
 
     private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private boolean isRunning = false;
     private boolean saveThreadRunning = false;
 
-    public String zhihuRun(String id) throws Exception {
+    public void zhihuRun(String id) throws Exception {
         crawlerDAO.createTable();
         console.paintImmediately(console.getBounds());
-        String msg = "";
+        String msg;
         if (isRunning) {
             console.append("正在运行");
             throw new Exception("正在运行");
@@ -66,58 +64,43 @@ public class CrawlerService {
             questionIds.add(id);
         }
 
-        crawlerThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    console.append(formatter.format(new Date()) + "  开始爬取");
-                    if (questionIds.size() == 0) {
-                        throw new Exception("请输入ID");
-                    }
-                    crawler = new QuestionCrawler(questionIds);
-                    if (savedQuestionIdsList != null) {
-                        crawler.setResultList(savedQuestionIdsList);
-                    } else {
-                        crawler.setResultList(new ArrayList<>());
-                    }
-                    crawler.run();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return;
+        new Thread(() -> {
+            try {
+                console.append(formatter.format(new Date()) + "  开始爬取");
+                if (questionIds.size() == 0) {
+                    throw new Exception("请输入ID");
                 }
-                console.append(formatter.format(new Date()) + "  结束爬取");
-                isRunning = false;
-                crawlerThread.interrupt();
+                crawler = new QuestionCrawler(questionIds,savedQuestionIdsList);
+                crawler.run();
+            } catch (Exception e) {
+                e.printStackTrace();
+                return;
             }
-        });
-        crawlerThread.start();
+            console.append(formatter.format(new Date()) + "  结束爬取");
+            isRunning = false;
+        }).start();
         isRunning = true;
 
         if (!saveThreadRunning) {
-            saveThread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    saveThreadRunning = true;
-                    while (isRunning) {
-                        try {
-                            Thread.sleep(5 * 60 * 1000);
-                            zhihuSave();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                            zhihuStop();
-                            return;
-                        }
+            new Thread(() -> {
+                saveThreadRunning = true;
+                while (isRunning) {
+                    try {
+                        Thread.sleep(5 * 60 * 1000);
+                        zhihuSave();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                        zhihuStop();
+                        return;
                     }
-                    saveThreadRunning = false;
                 }
-            });
-            saveThread.start();
+                saveThreadRunning = false;
+            }).start();
         }
-        return msg;
     }
 
     public String zhihuSave() {
-        String msg = "";
+        String msg;
         try {
             List<Question> questions = crawler.getQuestionList();
             msg = formatter.format(new Date()) + "  添加" + questions.size() + "条数据";
@@ -127,25 +110,23 @@ public class CrawlerService {
             }
         } catch (NullPointerException e) {
             msg = "未启动！！！";
-        } finally {
-            console.append(msg);
-            return msg;
         }
+        console.append(msg);
+        return msg;
     }
 
     public String zhihuStop() {
-        String msg = "";
+        String msg;
         try {
-            zhihuSave();
             crawler.stop();
+            zhihuSave();
             isRunning = false;
             msg = formatter.format(new Date()) + "  停止爬取";
         } catch (NullPointerException e) {
             msg = "未启动！！！";
-        } finally {
-            console.append(msg);
-            return msg;
         }
+        console.append(msg);
+        return msg;
     }
 
     public JTextArea getConsole() {

@@ -2,9 +2,10 @@ package com.zcx.zhihuCrawler.controller;
 
 import com.zcx.zhihuCrawler.service.CrawlerService;
 import com.zcx.zhihuCrawler.service.JsonResult;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
 
 /**
  * 类说明
@@ -16,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/crawler")
 public class CrawlerController {
 
-    @Autowired
+    @Resource
     private CrawlerService crawlerService;
 
     @RequestMapping("zhihu/run")
