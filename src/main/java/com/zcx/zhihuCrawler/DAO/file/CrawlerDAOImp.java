@@ -21,9 +21,13 @@ public class CrawlerDAOImp implements CrawlerDAO {
     public void saveQuestion(List<Question> questions) {
         try {
             FileOutputStream out = new FileOutputStream(filePath, true);
-            PrintStream p = new PrintStream(out);
+            OutputStreamWriter osw = new OutputStreamWriter(out, "utf-8");
+            PrintWriter p = new PrintWriter(osw);
             questions.forEach(one -> p.println(one.toString()));
+            p.flush();
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
     }
