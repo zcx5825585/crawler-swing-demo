@@ -74,6 +74,8 @@ public class CrawlerService {
                     crawler = new QuestionCrawler(questionIds);
                     if (savedQuestionIdsList != null) {
                         crawler.setResultList(savedQuestionIdsList);
+                    }else {
+                        crawler.setResultList(new ArrayList<>());
                     }
                     crawler.run();
                 } catch (Exception e) {
