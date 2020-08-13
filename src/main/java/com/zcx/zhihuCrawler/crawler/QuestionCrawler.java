@@ -20,9 +20,11 @@ import java.util.Map;
  */
 public class QuestionCrawler {
 
+    private boolean stop;
     private List<String> waitList;//已找到链接但未保存的数据
     private List<String> resultList;//已爬取列表，用于判断是否再次爬取
     private List<Question> questionList;//已爬取并等待保存的数据
+    private boolean saving;
 
     private Gson gson = null;
 
@@ -37,6 +39,7 @@ public class QuestionCrawler {
 
     //初始化
     public QuestionCrawler(List<String> startingURL, List<String> resultList) {
+        this.stop = false;
         //将起始的URL添加到waitList，然后通过一个while循环重复处理waitList中每一个URL
         this.waitList = startingURL;
         //设置已爬取列表
@@ -47,8 +50,7 @@ public class QuestionCrawler {
 
     //停止
     public void stop() {
-        waitList.clear();
-        resultList.clear();
+        this.stop = true;
         try {
             Thread.sleep(100);
         } catch (InterruptedException e) {
@@ -59,15 +61,20 @@ public class QuestionCrawler {
     //清空待保存数据
     public void initQuestionList() {
         questionList.clear();
+        saving = false;
     }
 
     //获取待保存数据
-    public List<Question> getQuestionList() {
+    public List<Question> getQuestionList() throws Exception {
+        if (saving) {
+            throw new Exception("数据正在保存中");
+        }
+        saving = true;
         return questionList;
     }
 
     public void run() {
-        while (!waitList.isEmpty()) {
+        while (stop && !waitList.isEmpty()) {
             //将列表中第一个RUL去除,并对其进行处理
             String urlString = waitList.remove(0);
             sendAndGetSubURLs(urlString);

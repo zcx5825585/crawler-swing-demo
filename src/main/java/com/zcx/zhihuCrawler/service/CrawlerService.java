@@ -70,7 +70,7 @@ public class CrawlerService {
                 if (questionIds.size() == 0) {
                     throw new Exception("请输入ID");
                 }
-                crawler = new QuestionCrawler(questionIds,savedQuestionIdsList);
+                crawler = new QuestionCrawler(questionIds, savedQuestionIdsList);
                 crawler.run();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -110,6 +110,8 @@ public class CrawlerService {
             }
         } catch (NullPointerException e) {
             msg = "未启动！！！";
+        } catch (Exception e) {
+            msg = e.getMessage();
         }
         console.append(msg);
         return msg;
