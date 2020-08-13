@@ -10,25 +10,24 @@ import java.util.List;
 
 @Repository
 public class CrawlerDAOImp implements CrawlerDAO {
-    private int count=0;
+
     @Override
     public void saveQuestion(List<Question> questions) {
         try {
-            FileOutputStream out=new FileOutputStream("questions");
-            PrintStream p=new PrintStream(out);
-            questions.forEach(one->{
-                count++;
+            FileOutputStream out = new FileOutputStream("questions",true);
+            PrintStream p = new PrintStream(out);
+            questions.forEach(one -> {
                 p.println(one.toString());
             });
-        } catch (FileNotFoundException e){
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
 
     @Override
     public void createTable() {
-        File file=new File("questions");
-        if(!file.exists()) {
+        File file = new File("questions");
+        if (!file.exists()) {
             try {
                 file.createNewFile();
             } catch (IOException e) {
@@ -39,11 +38,26 @@ public class CrawlerDAOImp implements CrawlerDAO {
 
     @Override
     public List<String> getSavedQuestionsList() {
-        return new ArrayList<>();
+        List<String> savedQuestionsList = new ArrayList<>();
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("questions")));
+            while (reader.ready()) {
+                String line = reader.readLine();
+                savedQuestionsList.add(line.split(" ")[0]);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return savedQuestionsList;
     }
 
     @Override
     public List<String> getLastQuestionIds() {
-        return new ArrayList<>();
+        List<String> savedQuestionIdsList = this.getSavedQuestionsList();
+        int endIndex = savedQuestionIdsList.size() - 1;
+        List<String> getLastQuestionIds = savedQuestionIdsList.subList(endIndex > 100 ? endIndex - 100 : 0, endIndex);
+        return getLastQuestionIds;
     }
 }

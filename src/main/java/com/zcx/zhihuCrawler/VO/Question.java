@@ -56,6 +56,6 @@ public class Question {
     @Override
     public String toString() {
 //        return "https://www.zhihu.com/question/" + id + " " + title + " 回答数：" + answerCount + " 评论数：" + commentCount + " 回复数：" + followerCount + "\n";
-        return "https://www.zhihu.com/question/" + id + " " + title + " " + answerCount + " " + commentCount + " " + followerCount ;
+        return id + " https://www.zhihu.com/question/" + id + " " + title + " " + answerCount + " " + commentCount + " " + followerCount;
     }
 }

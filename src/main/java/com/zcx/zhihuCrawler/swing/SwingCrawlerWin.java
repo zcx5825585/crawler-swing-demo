@@ -43,7 +43,6 @@ public class SwingCrawlerWin {
                     if (!"".equals(userText.getText())) {
                         id = userText.getText();
                     }
-                    System.out.println(id);
                     crawlerService.zhihuRun(id);
                 } catch (Exception exception) {
                     exception.printStackTrace();

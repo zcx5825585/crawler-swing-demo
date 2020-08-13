@@ -47,21 +47,23 @@ public class CrawlerService {
             console.append("正在运行");
             throw new Exception("正在运行");
         }
-        List<String> questionIds;
-        if (id == null) {
-            questionIds = crawlerDAO.getLastQuestionIds();
-            if (questionIds == null) {
-                console.append("ID不能为空");
-                throw new Exception("ID不能为空");
-            }
-            console.append("最新数据ID：" + questionIds.get(0) + "...");
-        } else {
-            questionIds = new ArrayList<>();
-            questionIds.add(0, id);
-        }
+
         List<String> savedQuestionIdsList = crawlerDAO.getSavedQuestionsList();
         msg = "已有数据：" + savedQuestionIdsList.size() + "条";
         console.append(msg);
+        List<String> questionIds;
+        if (id == null) {
+            if (savedQuestionIdsList.size() > 0) {
+                questionIds = crawlerDAO.getLastQuestionIds();
+                console.append("最新数据ID：" + questionIds.get(0) + "...");
+            } else {
+                console.append("ID不能为空");
+                throw new Exception("ID不能为空");
+            }
+        } else {
+            questionIds = new ArrayList<>();
+            questionIds.add(id);
+        }
 
         crawlerThread = new Thread(new Runnable() {
             @Override
@@ -74,7 +76,7 @@ public class CrawlerService {
                     crawler = new QuestionCrawler(questionIds);
                     if (savedQuestionIdsList != null) {
                         crawler.setResultList(savedQuestionIdsList);
-                    }else {
+                    } else {
                         crawler.setResultList(new ArrayList<>());
                     }
                     crawler.run();

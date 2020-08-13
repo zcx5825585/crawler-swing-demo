@@ -168,7 +168,6 @@ public class QuestionCrawler {
         Question question = new Question();
         int endIndex;
 
-        System.out.println(line);
         startIndex = line.indexOf("\"title\":\"", startIndex);
         startIndex = startIndex + "\"title\":\"".length();
         endIndex = line.indexOf("\",", startIndex);
