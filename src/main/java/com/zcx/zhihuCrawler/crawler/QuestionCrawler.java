@@ -88,8 +88,6 @@ public class QuestionCrawler {
             System.out.println(line);
 //            getSubURLsByOrigin(line);
             getSubURLsByJson(line);
-            //将id添加到已爬取列表
-            resultList.add(questionId);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -111,6 +109,8 @@ public class QuestionCrawler {
                 question.setId(id);
                 //添加到待保存列表
                 questionList.add(question);
+                //将id添加到已爬取列表
+                resultList.add(id);
             }
         }
     }
@@ -119,6 +119,7 @@ public class QuestionCrawler {
         Question question = new Question();
 
         String title = (String) map.get("title");
+        title = title.replaceAll(" ", "");
         question.setTitle(title);
 
         Double answerCount = (Double) map.get("answer_count");
@@ -145,8 +146,10 @@ public class QuestionCrawler {
                 if (notExist(id)) {
                     Question question = turnToQuestion(startIndex, line);
                     question.setId(id);
-                    //将
+                    //将结果添加到待保存列表
                     questionList.add(question);
+                    //将id添加到已爬取列表
+                    resultList.add(id);
                 }
             }
         }
@@ -171,7 +174,7 @@ public class QuestionCrawler {
         startIndex = line.indexOf("\"title\":\"", startIndex);
         startIndex = startIndex + "\"title\":\"".length();
         endIndex = line.indexOf("\",", startIndex);
-        String title = line.substring(startIndex, endIndex);
+        String title = line.substring(startIndex, endIndex).replaceAll(" ", "");
         question.setTitle(title);
 
         startIndex = line.indexOf("\"answer_count\":", startIndex);

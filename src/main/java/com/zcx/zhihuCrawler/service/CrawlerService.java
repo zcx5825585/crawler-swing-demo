@@ -38,6 +38,7 @@ public class CrawlerService {
     private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private boolean isRunning = false;
+    private boolean saveThreadRunning = false;
 
     public String zhihuRun(String id) throws Exception {
         crawlerDAO.createTable();
@@ -86,27 +87,32 @@ public class CrawlerService {
                 }
                 console.append(formatter.format(new Date()) + "  结束爬取");
                 isRunning = false;
+                crawlerThread.interrupt();
             }
         });
         crawlerThread.start();
         isRunning = true;
 
-        saveThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (isRunning) {
-                    try {
-                        Thread.sleep(5 * 60 * 1000);
-                        zhihuSave();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                        zhihuStop();
-                        return;
+        if (!saveThreadRunning) {
+            saveThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    saveThreadRunning = true;
+                    while (isRunning) {
+                        try {
+                            Thread.sleep(5 * 60 * 1000);
+                            zhihuSave();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                            zhihuStop();
+                            return;
+                        }
                     }
+                    saveThreadRunning = false;
                 }
-            }
-        });
-        saveThread.start();
+            });
+            saveThread.start();
+        }
         return msg;
     }
 
