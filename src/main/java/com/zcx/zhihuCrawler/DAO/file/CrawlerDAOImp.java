@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +44,7 @@ public class CrawlerDAOImp implements CrawlerDAO {
     public List<String> getSavedQuestionsList() {
         List<String> savedQuestionsList = new ArrayList<>();
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("questions")));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("questions"), StandardCharsets.UTF_8));
             while (reader.ready()) {
                 String line = reader.readLine();
                 savedQuestionsList.add(line.split(" ")[0]);
