@@ -74,7 +74,7 @@ public class QuestionCrawler {
     }
 
     public void run() {
-        while (stop && !waitList.isEmpty()) {
+        while (!stop && !waitList.isEmpty()) {
             //将列表中第一个RUL去除,并对其进行处理
             String urlString = waitList.remove(0);
             sendAndGetSubURLs(urlString);

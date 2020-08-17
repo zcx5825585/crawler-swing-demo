@@ -48,7 +48,7 @@ public class CrawlerDAOImp implements CrawlerDAO {
     public List<String> getSavedQuestionsList() {
         List<String> savedQuestionsList = new ArrayList<>();
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("questions"), StandardCharsets.UTF_8));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), StandardCharsets.UTF_8));
             while (reader.ready()) {
                 String line = reader.readLine();
                 savedQuestionsList.add(line.split(" ")[0]);
